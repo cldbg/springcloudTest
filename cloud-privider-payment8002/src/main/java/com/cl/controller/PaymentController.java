@@ -6,12 +6,7 @@ import com.cl.service.PaymentSrtvice;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
-import sun.rmi.runtime.Log;
-
-import java.util.List;
 
 /**
  * @author chenglei
@@ -27,15 +22,12 @@ public class PaymentController {
     @Value("${server.port}")
     private String serverPort;
 
-    @Autowired
-    private DiscoveryClient discoveryClient;
-
     @PostMapping("/payment/create")
     public CommonResult create(@RequestBody Payment payment){
         int result = paymentSrtvice.create(payment);
         log.info("result: "+result);
         if(result > 0){
-            return new CommonResult(200,"成功 ,serverPort: " + serverPort, result);
+            return new CommonResult(200,"成功，serverPort: " + serverPort,result);
         }else{
             return new CommonResult(444,"失败",null);
         }
@@ -44,24 +36,12 @@ public class PaymentController {
     @GetMapping("/payment/get/{id}")
     public CommonResult getPaymentById(@PathVariable("id") Integer id){
         Payment payment = paymentSrtvice.getPaymentById(id);
+        System.out.println("11");
         log.info("result: "+payment);
         if(payment != null){
-            return new CommonResult(200,"成功 ,serverPort: " + serverPort,payment);
+            return new CommonResult(200,"成功，serverPort: " + serverPort,payment);
         }else{
             return new CommonResult(444,"失败",null);
         }
-    }
-
-    @GetMapping("/payment/discovery")
-    public Object discovery(){
-        List<String> services = discoveryClient.getServices();
-        for (String s : services){
-            System.err.println("services: "+services);
-        }
-        List<ServiceInstance> instances = discoveryClient.getInstances("CLOUD-PAYMENT-SERVICE");
-        for (ServiceInstance serviceInstance : instances){
-            System.err.println("serviceInstance: "+serviceInstance);
-        }
-        return this.discoveryClient;
     }
 }
