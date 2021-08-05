@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import sun.rmi.runtime.Log;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author chenglei
@@ -70,4 +71,14 @@ public class PaymentController {
     {
         return serverPort;
     }
+
+    @GetMapping(value = "/payment/feign/timeout")
+    public String paymentFeignTimeOut()
+    {
+        System.out.println("*****paymentFeignTimeOut from port: "+serverPort);
+        //暂停几秒钟线程
+        try { TimeUnit.SECONDS.sleep(3); } catch (InterruptedException e) { e.printStackTrace(); }
+        return serverPort;
+    }
+
 }
